@@ -1,0 +1,7 @@
+AllCops:
+  Include:
+    - 'Gemfile'
+    - 'Thorfile'
+    - 'Rakefile'
+    - '*.gemspec'
+    - '**/*.rb'
