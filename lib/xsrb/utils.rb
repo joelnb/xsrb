@@ -119,7 +119,7 @@ module XenStore
         perms = [perms] if perms.is_a? String
         perms.each do |perm|
           unless perm =~ @permissions_regex
-            raise XenStore::Exceptions::UnknownPermission,
+            raise XenStore::Exceptions::InvalidPermission,
                   "Invalid permission string: #{perm}"
           end
         end
