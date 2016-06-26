@@ -1,12 +1,5 @@
 require 'rbconfig'
 
-class Integer
-  N_BYTES = [42].pack('i').size
-  N_BITS = N_BYTES * 16
-  MAX = 2**(N_BITS - 2) - 1
-  MIN = -MAX - 1
-end
-
 module XenStore
   OPERATIONS = {
     debug:                  0,
@@ -41,9 +34,16 @@ module XenStore
   # XenStore::Utils implements utility methods which are unlikely
   # to be required by users but are used by the rest of the module
   module Utils
-    class << self
-      @reqid = -1
+    class Integer
+      N_BYTES = [42].pack('i').size
+      N_BITS = N_BYTES * 16
+      MAX = 2**(N_BITS - 2) - 1
+      MIN = -MAX - 1
+    end
 
+    @reqid = -1
+
+    class << self
       def error(n)
         EXCEPTIONS[n]
       end
