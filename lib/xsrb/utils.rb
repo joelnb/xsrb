@@ -57,6 +57,9 @@ module XenStore
         ENV['XENSTORED_PATH'] || File.join(ENV['XENSTORED_RUNDIR'], 'socket')
       end
 
+      def valid_path?
+      end
+
       def xenbus_path
         case RbConfig::CONFIG['host_os']
         when /mswin|windows/i
