@@ -31,6 +31,7 @@ module XenStore
   # XenStore::Utils implements utility methods which are unlikely
   # to be required by users but are used by the rest of the module
   module Utils
+    # Some useful Integer constants
     class Integer
       N_BYTES = [42].pack('i').size
       N_BITS = N_BYTES * 16
