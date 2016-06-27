@@ -28,6 +28,8 @@ module XenStore
     restrict:               128
   }.freeze
 
+  NUL = "\0".freeze
+
   # XenStore::Utils implements utility methods which are unlikely
   # to be required by users but are used by the rest of the module
   module Utils
@@ -41,7 +43,7 @@ module XenStore
 
     @reqid = -1
 
-    @path_regex = Regexp.new '\A[a-zA-Z0-9-/_@]+\x00?\z'
+    @path_regex = Regexp.new '\A[a-zA-Z0-9\-/_@]+\x00?\z'
     @watch_path_regex = Regexp.new '\A@(?:introduceDomain|releaseDomain)\x00?\z'
     @permissions_regex = Regexp.new '\A[wrbn]\d+\z'
 
@@ -78,7 +80,9 @@ module XenStore
       #
       # @return [String] The path to the XenStore unix socket.
       def unix_socket_path
-        ENV['XENSTORED_PATH'] || File.join(ENV['XENSTORED_RUNDIR'], 'socket')
+        dp = '/var/run/xenstored'
+        ENV['XENSTORED_PATH'] || File.join(ENV['XENSTORED_RUNDIR'] || dp,
+                                           'socket')
       end
 
       # Raise an exception if the provided path is invalid.
