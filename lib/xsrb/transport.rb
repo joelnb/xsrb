@@ -6,5 +6,11 @@ module XenStore
     # XenStore in various ways.
     class Transport
     end
+
+    class XenBusTranspoort
+    end
+
+    class UnixSocketTransport
+    end
   end
 end
