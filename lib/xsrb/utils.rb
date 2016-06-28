@@ -4,6 +4,10 @@ require 'pathname'
 require 'xsrb/exceptions'
 
 module XenStore
+  # xs_wire.h uses uint32_t
+  MAX_UINT  = (2**32).freeze
+  NUL       = "\0".freeze
+
   OPERATIONS = {
     debug:                  0,
     directory:              1,
@@ -25,10 +29,10 @@ module XenStore
     is_domain_introduced:   17,
     resume:                 18,
     set_target:             19,
-    restrict:               128
+    restrict:               20,
+    reset_watches:          21,
+    invalid:                MAX_UINT
   }.freeze
-
-  NUL = "\0".freeze
 
   # XenStore::Utils implements utility methods which are unlikely
   # to be required by users but are used by the rest of the module
@@ -67,7 +71,7 @@ module XenStore
         @reqid += 1
 
         # Ensure no larger than uint32_t which is used in xs_wire.h
-        @reqid %= [42].pack('L').size
+        @reqid %= MAX_UINT
       end
 
       # Get the path of the XenStore unix socket.
