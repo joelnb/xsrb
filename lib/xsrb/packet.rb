@@ -6,10 +6,16 @@ module XenStore
       raise XenStore::Exceptions::InvalidPayload,
             "Payload too large (#{l}): #{payload}" if l > 4096
 
-      raise XenStore::Exceptions::InvalidOperation,
-            op.to_s unless XenStore::OPERATIONS.key?(op)
+      if op.is_a? Symbol
+        raise XenStore::Exceptions::InvalidOperation,
+              op.to_s unless XenStore::OPERATIONS.key?(op)
+        @op = XenStore::OPERATIONS[op]
+      else
+        raise XenStore::Exceptions::InvalidOperation,
+              op.to_s unless XenStore::OPERATIONS.values.include?(op)
+        @op = op
+      end
 
-      @op       = XenStore::OPERATIONS[op]
       @rq_id    = rq_id
       @tx_id    = tx_id
       @payload  = payload
@@ -17,7 +23,15 @@ module XenStore
 
     def pack
       packdata = [@op, @rq_id, @tx_id, @payload.length]
-      packdata.pack('IIII')
+      packdata.pack('IIII') + @payload.to_s
+    end
+
+    class << self
+      def unpack(header, payload)
+        # Ignore length
+        op, rq_id, tx_id = header.unpack('IIII')
+        new(op, payload, rq_id, tx_id)
+      end
     end
   end
 end
