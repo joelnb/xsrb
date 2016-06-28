@@ -6,5 +6,5 @@ AllCops:
     - '*.gemspec'
     - '**/*.rb'
 
-Metrics/MethodLength:
+MethodLength:
   Max: 20
