@@ -21,16 +21,20 @@ module XenStore
       @payload  = payload
     end
 
+    # Convert to a binary representation for transport to the xenstored
+    #
+    # @return [String] A binary version of the +Packet+.
     def pack
       packdata = [@op, @rq_id, @tx_id, @payload.length]
       packdata.pack('IIII') + @payload.to_s
     end
 
     class << self
-      def unpack(header, payload)
-        # Ignore length
-        op, rq_id, tx_id = header.unpack('IIII')
-        new(op, payload, rq_id, tx_id)
+      # Get size of each packet header
+      #
+      # @return [Integer] The size in bytes of each Packet header.
+      def header_size
+        4 * (32 / 8)
       end
     end
   end

@@ -9,19 +9,32 @@ module XenStore
     class XenBusTranspoort
       def initialize(path = nil)
         path ||= XenStore::Utils.xenbus_path
-        @fileno = File.open(path, 'w')
+        @file = File.open(path, 'wb')
 
-        ObjectSpace.define_finalizer(self, proc { @fileno.close })
+        # Ensure the file is closed when this object is garbage collected
+        ObjectSpace.define_finalizer(self, proc { @file.close })
       end
 
-      def send(s)
+      def send(data)
+        size = data.length
+        # Errno::EPIPE if other end disconnects
+        size -= @file.write while size
       end
 
-      def recv
+      def recv(size)
+        chunks = []
+        while size
+          chunk = @file.read(size)
+          raise Errno::ECONNRESET unless chunk
+
+          chunks << read
+          size -= read.length
+        end
+        chunks.join ''
       end
 
       def close
-        @fileno.close
+        @file.close
       end
     end
 
@@ -32,13 +45,21 @@ module XenStore
         path ||= XenStore::Utils.unix_socket_path
         @sock = UNIXSocket.new path
 
+        # Ensure the socket is closed when this object is garbage collected
         ObjectSpace.define_finalizer(self, proc { @sock.close })
       end
 
-      def send(s)
+      def send(data)
+        @sock.write(data)
       end
 
-      def recv
+      def recv(size)
+        chunks = []
+        while size
+          chunks << @sock.read(size)
+          size -= chunks[-1].length
+        end
+        chunks.join ''
       end
 
       def close
