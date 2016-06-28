@@ -127,18 +127,20 @@ module XenStore
       #
       # @return [String] The path to the XenBus device
       def xenbus_path
-        case RbConfig::CONFIG['host_os']
+        host_os = RbConfig::CONFIG['host_os']
+
+        case host_os
         when /mswin|windows/i
-          # Windows
-        when /linux|arch/i
-          # Linux
-        when /sunos|solaris/i
-          # Solaris
-        when /darwin/i
-          # MAC OS X
-        else
           raise NotImplementedError,
                 "OS '#{RbConfig::CONFIG['host_os']}' is not supported"
+        end
+
+        if host_os == 'linux' && !File.readable?('/dev/xen/xenbus')
+          '/proc/xen/xenbus'
+        elsif RbConfig::CONFIG['host_os'] == 'netbsd'
+          '/kern/xen/xenbus'
+        else
+          '/dev/xen/xenbus'
         end
       end
     end
