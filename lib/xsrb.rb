@@ -1,7 +1,7 @@
 require 'logging'
 
-require 'xsrb/utils'
 require 'xsrb/version'
+require 'xsrb/utils'
 
 Logging.logger.root.level = :warn
 

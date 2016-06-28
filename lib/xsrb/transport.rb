@@ -6,7 +6,7 @@ module XenStore
   module Transport
     # A Transport implementation which communicates with XenStore over the
     # special device on UNIX-like operating systems.
-    class XenBusTranspoort
+    class XenBusTransport
       def initialize(path = nil)
         path ||= XenStore::Utils.xenbus_path
         @file = File.open(path, 'wb')

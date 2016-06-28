@@ -3,17 +3,17 @@ require 'pathname'
 
 require 'xsrb/exceptions'
 
-#
 module XenStore
   # xs_wire.h uses uint32_t
   MAX_UINT  = (2**32).freeze
   NUL       = "\0".freeze
+  CAPS_FILE = '/proc/xen/capabilities'.freeze
 
   # Check whether we are in dom0
   begin
-    ADMIN = File.open('/proc/xen/capabilities', 'rb', &:read) == "control_d\n"
+    CONTROL_D = File.open(CAPS_FILE, 'rb', &:read) == "control_d\n"
   rescue Errno::ENOENT
-    ADMIN = false
+    CONTROL_D = false
   end
 
   OPERATIONS = {

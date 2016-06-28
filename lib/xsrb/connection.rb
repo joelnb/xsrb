@@ -32,4 +32,23 @@ module XenStore
       Packet.new(op, body, rq_id, tx_id)
     end
   end
+
+  # A +Connection+ implementation which communicates with XenStored over
+  # a UNIX socket.
+  class UnixSocketConnection < Connection
+    def initialize(path = nil)
+      @path = path || XenStore::Utils.unix_socket_path
+      transport = XenStore::Transport::UnixSocketTransport.new @path
+      super(transport)
+    end
+  end
+
+  # A +Connection+ implementation
+  class XenBusConnection < Connection
+    def initialize(path = nil)
+      @path = path || XenStore::Utils.xenbus_path
+      transport = XenStore::Transport::XenBusTransport.new @path
+      super(transport)
+    end
+  end
 end
