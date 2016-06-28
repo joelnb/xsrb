@@ -39,9 +39,9 @@ module XenStore
   module Utils
     @reqid = -1
 
-    @path_regex = Regexp.new '\A[a-zA-Z0-9\-/_@]+\x00?\z'
+    @path_regex       = Regexp.new '\A[a-zA-Z0-9\-/_@]+\x00?\z'
     @watch_path_regex = Regexp.new '\A@(?:introduceDomain|releaseDomain)\x00?\z'
-    @permissions_regex = Regexp.new '\A[wrbn]\d+\z'
+    @perms_regex      = Regexp.new '\A[wrbn]\d+\z'
 
     @errno_exception_map = Hash[
       Errno.constants.collect do |n|
@@ -120,7 +120,7 @@ module XenStore
       def valid_permissions?(perms)
         perms = [perms] if perms.is_a? String
         perms.each do |perm|
-          unless perm =~ @permissions_regex
+          unless perm =~ @perms_regex
             raise XenStore::Exceptions::InvalidPermission,
                   "Invalid permission string: #{perm}"
           end
