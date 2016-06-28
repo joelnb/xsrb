@@ -1,15 +1,18 @@
 module XenStore
   module Exceptions
-    class InvalidPermission
+    class XenStoreException < StandardError
     end
 
-    class InvalidPath
+    class InvalidPermission < XenStoreException
     end
 
-    class InvalidPayload
+    class InvalidPath < XenStoreException
     end
 
-    class InvalidOperation
+    class InvalidPayload < XenStoreException
+    end
+
+    class InvalidOperation < XenStoreException
     end
   end
 end
