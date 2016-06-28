@@ -33,14 +33,6 @@ module XenStore
   # XenStore::Utils implements utility methods which are unlikely
   # to be required by users but are used by the rest of the module
   module Utils
-    # Some useful Integer constants
-    class Integer
-      N_BYTES = [42].pack('i').size
-      N_BITS = N_BYTES * 16
-      MAX = 2**(N_BITS - 2) - 1
-      MIN = -MAX - 1
-    end
-
     @reqid = -1
 
     @path_regex = Regexp.new '\A[a-zA-Z0-9\-/_@]+\x00?\z'
@@ -73,7 +65,9 @@ module XenStore
       # @return [Integer] The next ID in the sequence.
       def next_request_id
         @reqid += 1
-        @reqid %= Integer::MAX
+
+        # Ensure no larger than uint32_t which is used in xs_wire.h
+        @reqid %= [42].pack('L').size
       end
 
       # Get the path of the XenStore unix socket.
