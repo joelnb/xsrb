@@ -6,7 +6,7 @@ require 'xsrb/exceptions'
 module XenStore
   # xs_wire.h uses uint32_t
   MAX_UINT  = (2**32).freeze
-  NUL       = "\0".freeze
+  NUL       = "\x00".freeze
   CAPS_FILE = '/proc/xen/capabilities'.freeze
 
   # Check whether we are in dom0

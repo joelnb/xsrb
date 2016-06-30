@@ -18,7 +18,7 @@ module XenStore
 
       @rq_id    = rq_id
       @tx_id    = tx_id
-      @payload  = payload
+      @payload  = payload.to_s + XenStore::NUL
     end
 
     # Convert to a binary representation for transport to the xenstored
@@ -26,7 +26,7 @@ module XenStore
     # @return [String] A binary version of the +Packet+.
     def pack
       packdata = [@op, @rq_id, @tx_id, @payload.length]
-      packdata.pack('IIII') + @payload.to_s
+      packdata.pack('IIII') + @payload
     end
 
     class << self
