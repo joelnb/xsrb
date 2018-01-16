@@ -27,8 +27,10 @@ module XenStore
         header = @transport.recv Packet.header_size
 
         op, rq_id, tx_id, len = header.unpack('IIII')
-        raise XenStore::Exceptions::InvalidPayload,
-              "Payload too large (#{l})" if len > 4096
+        if len > 4096
+          raise XenStore::Exceptions::InvalidPayload,
+                "Payload too large (#{l})"
+        end
 
         body = @transport.recv len
         Packet.new(op, body, rq_id, tx_id)

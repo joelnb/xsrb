@@ -3,6 +3,7 @@ require 'pathname'
 
 require 'xsrb/exceptions'
 
+#
 module XenStore
   # xs_wire.h uses uint32_t
   MAX_UINT  = (2**32).freeze
@@ -99,11 +100,15 @@ module XenStore
         pathname = Pathname.new path
         max_len = pathname.absolute? ? 3072 : 2048
 
-        raise XenStore::Exceptions::InvalidPath,
-              "Path too long: #{path}" if path.length > max_len
+        if path.length > max_len
+          raise XenStore::Exceptions::InvalidPath,
+                "Path too long: #{path}"
+        end
 
-        raise XenStore::Exceptions::InvalidPath,
-              path.to_s unless @path_regex =~ path
+        unless @path_regex =~ path
+          raise XenStore::Exceptions::InvalidPath,
+                path.to_s
+        end
 
         path
       end
@@ -113,9 +118,9 @@ module XenStore
       # @param path [String] The XenStore watch path to check.
       # @return [String] The valid path.
       def valid_watch_path?(path)
-        raise XenStore::Exceptions::InvalidPath,
-              path.to_s if path.starts_with?('@') &&
-                           !(@watch_path_regex =~ path)
+        if path.starts_with?('@') && (@watch_path_regex !~ path)
+          raise XenStore::Exceptions::InvalidPath, path.to_s
+        end
 
         valid_path? path
       end
@@ -139,20 +144,19 @@ module XenStore
       #
       # @return [String] The path to the XenBus device
       def xenbus_path
+        default = '/dev/xen/xenbus'
         host_os = RbConfig::CONFIG['host_os']
 
         case host_os
+        when 'netbsd'
+          '/kern/xen/xenbus'
+        when 'linux'
+          File.readable?('/dev/xen/xenbus') ? '/proc/xen/xenbus' : default
         when /mswin|windows/i
           raise NotImplementedError,
                 "OS '#{RbConfig::CONFIG['host_os']}' is not supported"
-        end
-
-        if host_os == 'linux' && !File.readable?('/dev/xen/xenbus')
-          '/proc/xen/xenbus'
-        elsif RbConfig::CONFIG['host_os'] == 'netbsd'
-          '/kern/xen/xenbus'
         else
-          '/dev/xen/xenbus'
+          default
         end
       end
     end
