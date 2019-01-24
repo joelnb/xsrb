@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.summary       = 'Ruby XenStore API Bindings'
   s.description   = 'Pure Ruby XenStore Bindings based on pyxs (https://github.com/selectel/pyxs)'
   s.authors       = ['joelnb']
-  s.homepage      = ''
+  s.homepage      = 'https://github.com/joelnb/xsrb'
   s.email         = 'joelnbarnham@gmail.com'
   s.files         = Dir.glob('{lib}/**/*')
   s.executables   = []
